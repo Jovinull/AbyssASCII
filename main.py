@@ -28,7 +28,7 @@ map = [
     ["plains",  "plains",     "plains",     "plains",     "forest",     "mountain",     "cave"],      # y = 0
     ["forest",  "forest",     "forest",     "forest",     "forest",     "hills",    "mountain"],  # y = 1
     ["forest",  "fields",     "bridge",     "plains",     "hills",      "forest",      "hills"],     # y = 2
-    ["plains",  "shop",       "town",       "major",      "plains",     "hills",    "mountain"],  # y = 3
+    ["plains",  "shop",       "town",       "mayor",      "plains",     "hills",    "mountain"],  # y = 3
     ["plains",  "fields",     "fields",     "plains",     "hills",      "mountain", "mountain"],  # y = 4
 ]
 
@@ -63,8 +63,8 @@ biom = {
     "bridge": {
         "t": "bridge",
         "e": True},
-    "major": {
-        "t": "major",
+    "mayor": {
+        "t": "mayor",
         "e": False},
 }
 
@@ -405,7 +405,7 @@ while run:
                 print("5 - USE POTION (30HP)")
             if elix > 0:
                 print("6 - USE ELIXIR (50HP)")
-            if map[y][x] in ["shop", "major", "cave"]:
+            if map[y][x] in ["shop", "mayor", "cave"]:
                 print("7 - ENTER")
             draw()
             
@@ -457,7 +457,7 @@ while run:
                 if map[y][x] == "shop":
                     buy = True
                     shop()
-                elif map[y][x] == "major":
+                elif map[y][x] == "mayor":
                     speak = True
                     mayor()
                 elif map[y][x] == "cave":
