@@ -1,7 +1,7 @@
-from curses import raw
 import os
-from random import random
 import random
+import sys
+import time
 
 run = True
 menu = True
@@ -22,6 +22,42 @@ elix = 0
 gold = 100
 x = 0
 y = 0
+
+TITLE_ART = r"""
+     _    ____  __   ______ ____     _    ____   ____ ___ ___ 
+    / \  | __ ) \ \ / / ___/ ___|   / \  / ___| / ___|_ _|_ _|
+   / _ \ |  _ \  \ V /\___ \___ \  / _ \ \___ \| |    | | | | 
+  / ___ \| |_) |  | |  ___) |__) |/ ___ \ ___) | |___ | | | | 
+ /_/   \_\____/   |_| |____/____//_/   \_\____/ \____|___|___|
+"""
+
+CAVE_ART = r"""
+      ________________________
+    /                         \
+   /    __________________     \
+  /    /                  \     \
+ /    /      ( DARK )      \     \
+|    |        ( MOAN )      |     |
+|    |                      |     |
+|    |      _        _      |     |
+|____|_____| |______| |_____|_____|
+"""
+
+DRAGON_ART = r"""
+              ___====-_  _-====___
+        _--^^^#####//      \\#####^^^--_
+     _-^##########// (    ) \\##########^-_
+    -############//  |\^^/|  \\############-
+  _/############//   (@::@)   \\############\_
+ /#############((     \\//     ))#############\
+-###############\\    (oo)    //###############-
+-#################\\  / vv \  //#################-
+-###################\\/      \//###################-
+ _#/|##########/\######(   )######/\##########|\#_
+ |/ |#/\#/\#/\/  \#/\##\   /##/\#/  \/\#/\#/\#| \|
+ `  |/  V  V  `   V  \# \_/ #/ V   '  V  V  \|  '
+    `             `   \_/   '               '
+"""
 
 map = [
     # x = 0       x = 1         x = 2        x = 3         x = 4          x = 5        x = 6
@@ -104,7 +140,19 @@ def clear():
     os.system('cls')
 
 def draw():
-    print('xX-----------------xX')
+    print('xX---------------------------------Xx')
+
+def typewriter(text, delay=0.03):
+    for char in text:
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+
+def animate_art(art, delay=0.05):
+    for line in art.split('\n'):
+        print(line)
+        time.sleep(delay)
 
 def save():
     list = [
@@ -141,6 +189,11 @@ def battle():
         enemy = random.choice(e_list)
     else:
         enemy = "Dragon"
+        clear()
+        animate_art(DRAGON_ART, 0.02)
+        typewriter("O AR ESTÁ QUENTE... A TERRA TREME...", 0.05)
+        typewriter("UM RUGIDO ASSSITADOR ECOA PELA CAVERNA!", 0.05)
+        time.sleep(1)
     hp = mobs[enemy]["hp"]
     hpmax = hp
     atk = mobs[enemy]["at"]
@@ -168,10 +221,10 @@ def battle():
 
         if choice == "1":
             hp -= ATK
-            print(name + " dealt " + str(ATK) + " damage to the " + enemy + ".")
+            typewriter(f"{name} desferiu um golpe de {ATK} de dano no {enemy}!")
             if hp > 0:
                 HP -= atk
-                print(enemy + " dealt " + str(atk) + " damage to " + name + ".")
+                typewriter(f"O {enemy} contra-atacou causando {atk} de dano!")
             input("> ")
 
         elif choice == "2":
@@ -195,25 +248,24 @@ def battle():
             input("> ")
 
         if HP <= 0:
-            print(enemy + " defeated " + name + "...")
+            typewriter(f"O {enemy} derrotou {name}...", 0.06)
             draw()
             fight = False
             play = False
             run = False
-            print("GAME OVER")
+            typewriter("FIM DE JOGO", 0.1)
             input("> ")
 
         if hp <= 0:
-            print(name + " defeated the " + enemy + "!")
+            typewriter(f"{name} derrotou o {enemy}!", 0.04)
             draw()
             fight = False
             gold += g
-            print("You found " + str(g) + " gold on the " + enemy + ".")
+            typewriter(f"Você encontrou {g} de ouro no corpo do {enemy}.")
             if random.randint(0, 100) <= 30:
                 pot += 1
                 print("You found a potion on the " + enemy + "!")
-            if enemy == "Dragon":
-                print("Congratulations! You've defeated the dragon and won the game!")
+                typewriter("Congratulations! You've defeated the dragon and won the game!", 0.05)
                 play = False
                 run = False
             input("> ")
@@ -276,12 +328,14 @@ def mayor():
     while speak:
         clear()
         draw()
-        print("Hello there, " + name + "!")
+        typewriter("Prefeito: Olá, " + name + "!", 0.04)
         if ATK < 10:
-            print("You're not strong enough to face the dragon yet! Keep practicing and come back later!")
+            typewriter("Prefeito: Você ainda não é forte o suficiente para enfrentar o dragão!", 0.04)
+            typewriter("Prefeito: Continue treinando e volte quando sua espada estiver mais afiada.", 0.04)
             key = False
         else:
-            print("You might want to take on the dragon now! Take this key but be careful with the beast!")
+            typewriter("Prefeito: Sinto que você está pronto. O destino do reino está em suas mãos!", 0.04)
+            typewriter("Prefeito: Pegue esta chave, mas tenha cuidado... o dragão não terá piedade.", 0.04)
             key = True
 
         draw()
@@ -298,8 +352,9 @@ def cave():
 
     while boss:
         clear()
+        animate_art(CAVE_ART, 0.03)
         draw()
-        print("Here lies the cave of the dragon. What will you do?")
+        typewriter("Você está na entrada da Caverna do Dragão. O medo sopra do interior...", 0.04)
         draw()
         if key:
             print("1 - USE KEY")
@@ -326,17 +381,32 @@ while run:
         draw()
         
         if rules:
-            print("I'm the creator of this game and these are the rules")
+            clear()
+            draw()
+            typewriter("REGRAS DO JOGO:", 0.05)
+            print("- Use os números para navegar e agir.")
+            print("- Enfrente monstros para ganhar ouro e experiência.")
+            print("- Fale com o Prefeito para destravar o desafio final.")
+            print("- Derrote o Dragão para vencer o jogo.")
+            draw()
             rules = False
             choice = ''
-            input('> ')
+            input('> Pressione ENTER para voltar')
         
         else:
             choice = input('# ')
         
         if choice == '1':
             clear()
-            name = input("# What's your name, hero? ")
+            animate_art(TITLE_ART)
+            print()
+            typewriter("No abismo mais profundo, onde os caracteres ASCII desaparecem no nada...")
+            typewriter("Um herói é convocado para enfrentar a escuridão.")
+            print()
+            name = input("# Qual o seu nome, herói? ")
+            clear()
+            typewriter(f"Bem-vindo, {name}. Sua jornada começa agora...")
+            time.sleep(1)
             menu = False
             play = True
         elif choice == '2':
@@ -354,7 +424,7 @@ while run:
                     y = int(load_list[7][:-1])
                     key = bool(load_list[8][:-1])
                     clear()
-                    print('Welcome back, ' + name + '!')
+                    typewriter(f"Bem-vindo de volta, {name}!", 0.04)
                     input('> ')
                     menu = False
                     play = True
