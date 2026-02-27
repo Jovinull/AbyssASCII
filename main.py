@@ -6,6 +6,7 @@ import time
 import re
 from healthbar import StatusBar, BarStyle
 from styles import COLOR_GREEN1, COLOR_DARK, COLOR_YELLOW, COLOR_RED, SYMBOL_BLOCK, SYMBOL_EMPTY, BOX_TL, BOX_TR, BOX_BL, BOX_BR, BOX_H, BOX_V, BOX_T, BOX_B, COLOR_DEFAULT
+import graphics
 
 run = True
 menu = True
@@ -32,41 +33,7 @@ y = 0
 health_bar_style = BarStyle(symbol_full=SYMBOL_BLOCK, symbol_empty=SYMBOL_EMPTY, length=15, color_full=COLOR_GREEN1, color_empty=COLOR_DARK)
 health_bar = StatusBar("HP", HP, HPMAX, health_bar_style, color_warning=COLOR_YELLOW, color_critical=COLOR_RED)
 
-TITLE_ART = r"""
-     _    ____  __   ______ ____     _    ____   ____ ___ ___ 
-    / \  | __ ) \ \ / / ___/ ___|   / \  / ___| / ___|_ _|_ _|
-   / _ \ |  _ \  \ V /\___ \___ \  / _ \ \___ \| |    | | | | 
-  / ___ \| |_) |  | |  ___) |__) |/ ___ \ ___) | |___ | | | | 
- /_/   \_\____/   |_| |____/____//_/   \_\____/ \____|___|___|
-"""
-
-CAVE_ART = r"""
-      ________________________
-    /                         \
-   /    __________________     \
-  /    /                  \     \
- /    /      ( DARK )      \     \
-|    |        ( MOAN )      |     |
-|    |                      |     |
-|    |      _        _      |     |
-|____|_____| |______| |_____|_____|
-"""
-
-DRAGON_ART = r"""
-              ___====-_  _-====___
-        _--^^^#####//      \\#####^^^--_
-     _-^##########// (    ) \\##########^-_
-    -############//  |\^^/|  \\############-
-  _/############//   (@::@)   \\############\_
- /#############((     \\//     ))#############\
--###############\\    (oo)    //###############-
--#################\\  / vv \  //#################-
--###################\\/      \//###################-
- _#/|##########/\######(   )######/\##########|\#_
- |/ |#/\#/\#/\/  \#/\##\   /##/\#/  \/\#/\#/\#| \|
- `  |/  V  V  `   V  \# \_/ #/ V   '  V  V  \|  '
-    `             `   \_/   '               '
-"""
+# Graphics constants are now imported from graphics.py
 
 map = [
     # x = 0       x = 1         x = 2        x = 3         x = 4          x = 5        x = 6
@@ -228,7 +195,7 @@ def battle():
     else:
         enemy = "Dragon"
         clear()
-        animate_art(DRAGON_ART, 0.02)
+        animate_art(graphics.DRAGON_ART, 0.02)
         typewriter("O AR ESTÁ QUENTE... A TERRA TREME...", 0.05)
         typewriter("UM RUGIDO ASSSITADOR ECOA PELA CAVERNA!", 0.05)
         time.sleep(1)
@@ -247,7 +214,13 @@ def battle():
         left.append("")
         left.append(f"  DEFEAT THE {enemy.upper()}!")
         left.append("")
-        # Placeholder for art or more info
+        # Add Enemy Art
+        art_name = f"{enemy.upper()}_ART"
+        enemy_art = getattr(graphics, art_name, "")
+        if enemy_art:
+            for line in enemy_art.strip('\n').split('\n'):
+                left.append(f"  {line}")
+        left.append("")
         left.append(f"  HP: {hp}/{hpmax}")
         # Simple text bar for enemy
         enemy_bar_len = 20
@@ -339,6 +312,9 @@ def shop():
 
     while buy:
         clear()
+        # Add Shopkeeper Art
+        for line in graphics.SHOPKEEPER_ART.strip('\n').split('\n'):
+            print(f"  {line}")
         draw()
         print("Welcome to the shop!")
         draw()
@@ -390,6 +366,9 @@ def mayor():
 
     while speak:
         clear()
+        # Add Mayor Art
+        for line in graphics.MAYOR_ART.strip('\n').split('\n'):
+            print(f"  {line}")
         draw()
         typewriter("Prefeito: Olá, " + name + "!", 0.04)
         if ATK < 10:
@@ -415,7 +394,7 @@ def cave():
 
     while boss:
         clear()
-        animate_art(CAVE_ART, 0.03)
+        animate_art(graphics.CAVE_ART, 0.03)
         draw()
         typewriter("Você está na entrada da Caverna do Dragão. O medo sopra do interior...", 0.04)
         draw()
@@ -462,7 +441,7 @@ if __name__ == "__main__":
             
             if choice == '1':
                 clear()
-                animate_art(TITLE_ART)
+                animate_art(graphics.TITLE_ART)
                 print()
                 typewriter("No abismo mais profundo, onde os caracteres ASCII desaparecem no nada...")
                 typewriter("Um herói é convocado para enfrentar a escuridão.")
@@ -523,7 +502,14 @@ if __name__ == "__main__":
                 left.append(f"  LOCATION: {biom[map[y][x]]['t'].upper()}")
                 left.append(f"  COORD: ({x}, {y})")
                 left.append("")
-                # Placeholder for potential visual map or flavor text
+                # Add Location Art
+                loc_type = biom[map[y][x]]['t'].upper()
+                art_name = f"{loc_type}_ART"
+                loc_art = getattr(graphics, art_name, "")
+                if loc_art:
+                    for line in loc_art.strip('\n').split('\n'):
+                        left.append(f"  {line}")
+                left.append("")
                 left.append(f"  The path ahead is {biom[map[y][x]]['t']}.")
                 if map[y][x] in ["shop", "mayor", "cave"]:
                     left.append(f"  {COLOR_YELLOW}!! INTEREST POINT DETECTED !!{COLOR_DEFAULT}")
