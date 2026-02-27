@@ -30,11 +30,13 @@ class StatusBar:
         else:
             return self.color_critical
 
-    def render(self):
+    def render(self, simple=False):
         filled = round(self.current / self.maximum * self.style.length) if self.maximum else 0
         empty = self.style.length - filled
         color = self.get_color()
         bar = f"{color}{self.style.symbol_full * filled}{self.style.color_empty}{self.style.symbol_empty * empty}{self.style.color_text}"
+        if simple:
+            return f"{bar} {self.current}/{self.maximum}"
         return f"{self.label}: {self.current} / {self.maximum}\n|{bar}|"
 
     def update(self, current):

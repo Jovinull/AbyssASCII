@@ -24,3 +24,13 @@ COLOR_LIST = [
 
 SYMBOL_BLOCK = "█"
 SYMBOL_EMPTY = "_"
+
+# Box Drawing Characters
+BOX_TL = "╔"
+BOX_TR = "╗"
+BOX_BL = "╚"
+BOX_BR = "╝"
+BOX_H = "═"
+BOX_V = "║"
+BOX_T = "╤"
+BOX_B = "╧"
