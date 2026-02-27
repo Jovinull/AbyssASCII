@@ -84,6 +84,26 @@ MAYOR_ART = r"""
      [_______]
 """
 
+# Items
+POTION_ICON = "(O)"
+ELIXIR_ICON = "[X]"
+
+SMALL_POTION_ART = r"""
+      {}
+      ||
+     |--|
+     |  |
+     |__|
+"""
+
+MEDIUM_ELIXIR_ART = r"""
+      {}
+     {  }
+     |  |
+     |  |
+     |__|
+"""
+
 # Biomes / Locations
 PLAINS_ART = r"""
    \ | /

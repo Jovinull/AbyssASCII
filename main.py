@@ -240,8 +240,10 @@ def battle():
         hp_render = health_bar.render(simple=True).split('\n')
         right.append(f"  HEALTH: {hp_render[0]}")
         right.append("")
-        right.append(f"  POTIONS: {pot} (O)")
-        right.append(f"  ELIXIRS: {elix} (X)")
+        right.append(f"  {BOX_H * 8} INVENTORY {BOX_H * 8}")
+        right.append("")
+        right.append(f"  {graphics.POTION_ICON} POTIONS: {pot}")
+        right.append(f"  {graphics.ELIXIR_ICON} ELIXIRS: {elix}")
         right.append("")
         right.append(f"  {BOX_H * 8} ACTIONS {BOX_H * 8}")
         right.append("")
@@ -249,7 +251,7 @@ def battle():
         if pot > 0:
             right.append("  2 - USE POTION (30HP)")
         if elix > 0:
-            right.append("  3 - USE ELIXIR (50HP)")
+            right.append("  3 - USE ELIXIR (MAXHP)")
         
         draw_ui(left, right)
         
@@ -312,22 +314,52 @@ def shop():
 
     while buy:
         clear()
-        # Add Shopkeeper Art
+        
+        # Left Panel: Shopkeeper and Item Art
+        left = []
+        left.append("")
+        left.append(f"  {BOX_H * 10} SHOP {BOX_H * 10}")
+        left.append("")
         for line in graphics.SHOPKEEPER_ART.strip('\n').split('\n'):
-            print(f"  {line}")
-        draw()
-        print("Welcome to the shop!")
-        draw()
-        print("GOLD: " + str(gold))
-        print("POTIONS: " + str(pot))
-        print("ELIXIRS: " + str(elix))
-        print("ATK: " + str(ATK))
-        draw()
-        print("1 - BUY POTION (30HP) - 5 GOLD")
-        print("2 - BUY ELIXIR (MAXHP) - 8 GOLD")
-        print("3 - UPGRADE WEAPON (+2ATK) - 10 GOLD")
-        print("4 - LEAVE")
-        draw()
+            left.append(f"  {line}")
+        left.append("")
+        left.append("    ITEMS FOR SALE:")
+        left.append("")
+        
+        # Split into two columns for items
+        item_art_lines = graphics.SMALL_POTION_ART.strip('\n').split('\n')
+        elixir_art_lines = graphics.MEDIUM_ELIXIR_ART.strip('\n').split('\n')
+        
+        for i in range(max(len(item_art_lines), len(elixir_art_lines))):
+            p_line = item_art_lines[i] if i < len(item_art_lines) else " " * 12
+            e_line = elixir_art_lines[i] if i < len(elixir_art_lines) else " " * 12
+            left.append(f"  {p_line}    {e_line}")
+        
+        left.append("    POTION         ELIXIR")
+        left.append("    +30 HP         MAX HP")
+
+        # Right Panel: Gold, Inventory and Menu
+        right = []
+        right.append("")
+        right.append(f"  {BOX_H * 8} YOUR POCKET {BOX_H * 8}")
+        right.append("")
+        right.append(f"  GOLD: {gold}")
+        right.append("")
+        right.append(f"  {BOX_H * 8} INVENTORY {BOX_H * 8}")
+        right.append("")
+        right.append(f"  {graphics.POTION_ICON} POTIONS: {pot}")
+        right.append(f"  {graphics.ELIXIR_ICON} ELIXIRS: {elix}")
+        right.append(f"  WEAPON ATK: {ATK}")
+        right.append("")
+        right.append(f"  {BOX_H * 8} ACTIONS {BOX_H * 8}")
+        right.append("")
+        right.append("  1 - BUY POTION  (5G)")
+        right.append("  2 - BUY ELIXIR  (8G)")
+        right.append("  3 - WEAPON UPGRADE (+2) (10G)")
+        right.append("")
+        right.append("  4 - LEAVE SHOP")
+
+        draw_ui(left, right)
 
         choice = input("# ")
 
@@ -335,27 +367,27 @@ def shop():
             if gold >= 5:
                 pot += 1
                 gold -= 5
-                print("You've bought a potion!")
+                typewriter("You've bought a potion!")
             else:
-                print("Not enough gold!")
+                typewriter("Not enough gold!")
             input("> ")
 
         elif choice == "2":
             if gold >= 8:
                 elix += 1
                 gold -= 8
-                print("You've bought an elixir!")
+                typewriter("You've bought an elixir!")
             else:
-                print("Not enough gold!")
+                typewriter("Not enough gold!")
             input("> ")
 
         elif choice == "3":
             if gold >= 10:
                 ATK += 2
                 gold -= 10
-                print("You've upgraded your weapon!")
+                typewriter("You've upgraded your weapon!")
             else:
-                print("Not enough gold!")
+                typewriter("Not enough gold!")
             input("> ")
 
         elif choice == "4":
@@ -526,7 +558,10 @@ if __name__ == "__main__":
                 right.append(f"  ATK: {ATK}")
                 right.append(f"  GOLD: {gold}")
                 right.append("")
-                right.append(f"  POTIONS: {pot}  ELIXIRS: {elix}")
+                right.append(f"  {BOX_H * 8} INVENTORY {BOX_H * 8}")
+                right.append("")
+                right.append(f"  {graphics.POTION_ICON} POTIONS: {pot}")
+                right.append(f"  {graphics.ELIXIR_ICON} ELIXIRS: {elix}")
                 right.append("")
                 right.append(f"  {BOX_H * 8} NAVIGATION {BOX_H * 8}")
                 right.append("")
@@ -538,6 +573,7 @@ if __name__ == "__main__":
                 if elix > 0: right.append("  6 - USE ELIXIR")
                 if map[y][x] in ["shop", "mayor", "cave"]:
                     right.append(f"  7 - ENTER {map[y][x].upper()}")
+                right.append("")
                 right.append("  0 - SAVE AND QUIT")
 
                 draw_ui(left, right)
