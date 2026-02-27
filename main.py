@@ -1,7 +1,10 @@
+
 import os
 import random
 import sys
 import time
+from healthbar import StatusBar, BarStyle
+from styles import COLOR_GREEN1, COLOR_DARK, COLOR_YELLOW, COLOR_RED, SYMBOL_BLOCK, SYMBOL_EMPTY
 
 run = True
 menu = True
@@ -14,6 +17,7 @@ buy = False
 speak = False
 boss = False
 
+
 HP = 50
 HPMAX = HP
 ATK = 3
@@ -22,6 +26,10 @@ elix = 0
 gold = 100
 x = 0
 y = 0
+
+# Health bar setup
+health_bar_style = BarStyle(symbol_full=SYMBOL_BLOCK, symbol_empty=SYMBOL_EMPTY, length=24, color_full=COLOR_GREEN1, color_empty=COLOR_DARK)
+health_bar = StatusBar("HP", HP, HPMAX, health_bar_style, color_warning=COLOR_YELLOW, color_critical=COLOR_RED)
 
 TITLE_ART = r"""
      _    ____  __   ______ ____     _    ____   ____ ___ ___ 
@@ -173,14 +181,15 @@ def save():
         f.write(item + "\n")
     f.close()
 
+
 def heal(amount):
-    global HP
-    
+    global HP, health_bar
     if HP + amount < HPMAX:
         HP += amount
     else:
         HP = HPMAX
-    print(name + " healed for " + str(amount) + " HP!")
+    health_bar.update(HP)
+    print(f"{name} healed for {amount} HP!")
 
 def battle():
     global fight, play, run, HP, pot, elix, gold, boss
@@ -204,10 +213,14 @@ def battle():
         draw()
         print("Defeat the " + enemy + "!")
         draw()
-        print(enemy + "'s HP: " + str(hp) + "/" + str(hpmax))
-        print(name + "'s HP: " + str(HP) + "/" + str(HPMAX))
-        print("POTIONS: " + str(pot))
-        print("ELIXIR: " + str(elix))
+        # Enemy HP bar (simple)
+        print(f"{enemy}'s HP: {hp}/{hpmax}")
+        # Player HP bar (visual)
+        health_bar.maximum = HPMAX
+        health_bar.update(HP)
+        print(health_bar.render())
+        print(f"POTIONS: {pot}")
+        print(f"ELIXIR: {elix}")
         draw()
         print("1 - ATTACK")
         if pot > 0:
@@ -455,7 +468,9 @@ while run:
             print('LOCATION: ' + biom[map[y][x]]['t'])
             draw()
             print('NAME: ' + name)
-            print('HP: ' + str(HP) + '/' + str(HPMAX))
+            health_bar.maximum = HPMAX
+            health_bar.update(HP)
+            print(health_bar.render())
             print('ATK ' + str(ATK))
             print('POTIONS: ' + str(pot))
             print('ELIXIRS: ' + str(elix))
